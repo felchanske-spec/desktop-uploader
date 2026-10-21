@@ -7,7 +7,7 @@ endif
 
 run:
 	@echo "Launching desktop-uploader with environment variables..."
-	go run main.go
+	go run cmd/uploader-backend/main.go
 
 test:
 	@echo "Running all unit tests safely isolated..."
