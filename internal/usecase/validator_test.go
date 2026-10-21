@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"testing"
@@ -80,7 +81,7 @@ func TestUploadInteractor_ValidateAndQueue_TableDriven(t *testing.T) {
 			interactor := NewUploadInteractor(mockQueue)
 
 			startTime := time.Now()
-			err := interactor.ValidateAndQueue(tc.filePath, tc.target)
+			err := interactor.ValidateAndQueue(context.Background(), tc.filePath, tc.target)
 
 			if tc.expectedErr == nil {
 				assert.NoError(t, err)

@@ -10,6 +10,7 @@ service Upload {
 
 message UploadRequest {
     string file_path = 1;
+    string target = 2;
 }
 
 message UploadResponse {
