@@ -79,6 +79,7 @@ func (UploadResponse_State) EnumDescriptor() ([]byte, []int) {
 type UploadRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	FilePath      string                 `protobuf:"bytes,1,opt,name=file_path,json=filePath,proto3" json:"file_path,omitempty"`
+	Target        string                 `protobuf:"bytes,2,opt,name=target,proto3" json:"target,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -116,6 +117,13 @@ func (*UploadRequest) Descriptor() ([]byte, []int) {
 func (x *UploadRequest) GetFilePath() string {
 	if x != nil {
 		return x.FilePath
+	}
+	return ""
+}
+
+func (x *UploadRequest) GetTarget() string {
+	if x != nil {
+		return x.Target
 	}
 	return ""
 }
@@ -184,9 +192,10 @@ var File_api_proto_uploader_proto protoreflect.FileDescriptor
 
 const file_api_proto_uploader_proto_rawDesc = "" +
 	"\n" +
-	"\x18api/proto/uploader.proto\x12\x05proto\",\n" +
+	"\x18api/proto/uploader.proto\x12\x05proto\"D\n" +
 	"\rUploadRequest\x12\x1b\n" +
-	"\tfile_path\x18\x01 \x01(\tR\bfilePath\"\xd3\x01\n" +
+	"\tfile_path\x18\x01 \x01(\tR\bfilePath\x12\x16\n" +
+	"\x06target\x18\x02 \x01(\tR\x06target\"\xd3\x01\n" +
 	"\x0eUploadResponse\x121\n" +
 	"\x05state\x18\x01 \x01(\x0e2\x1b.proto.UploadResponse.StateR\x05state\x12)\n" +
 	"\x10progress_percent\x18\x02 \x01(\x05R\x0fprogressPercent\x12\x18\n" +

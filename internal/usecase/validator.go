@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"desktop-uploader/internal/domain"
 	"errors"
 	"fmt"
@@ -26,7 +27,7 @@ func NewUploadInteractor(q TaskQueue) *UploadInteractor {
 	return &UploadInteractor{queue: q}
 }
 
-func (u *UploadInteractor) ValidateAndQueue(filePath, target string) error {
+func (u *UploadInteractor) ValidateAndQueue(ctx context.Context, filePath, target string) error {
 	info, err := os.Stat(filePath)
 	if err != nil {
 		if os.IsNotExist(err) {
