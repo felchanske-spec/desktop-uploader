@@ -4,18 +4,27 @@ import (
 	"context"
 	"errors"
 	"log"
+	"strconv"
 	"sync"
 
 	"desktop-uploader/internal/domain"
 )
 
-type TaskChannelQueue struct {
-	ch chan domain.Task
+var ErrQueueFull = errors.New("internal task queue is full")
+
+type TelegramClient interface {
+	SendFile(chatID int64, filePath string) error
 }
 
-func NewTaskChannelQueue(bufferSize int) *TaskChannelQueue {
+type TaskChannelQueue struct {
+	ch       chan domain.Task
+	tgClient TelegramClient
+}
+
+func NewTaskChannelQueue(bufferSize int, tgClient TelegramClient) *TaskChannelQueue {
 	return &TaskChannelQueue{
-		ch: make(chan domain.Task, bufferSize),
+		ch:       make(chan domain.Task, bufferSize),
+		tgClient: tgClient,
 	}
 }
 
@@ -24,7 +33,7 @@ func (q *TaskChannelQueue) Push(task domain.Task) error {
 	case q.ch <- task:
 		return nil
 	default:
-		return errors.New("internal task queue is full")
+		return ErrQueueFull
 	}
 }
 
@@ -58,6 +67,18 @@ func (q *TaskChannelQueue) worker(ctx context.Context, id int, wg *sync.WaitGrou
 			}
 
 			log.Printf("[Worker %d] Processing task %s for file: %s", id, task.ID, task.FilePath)
+
+			chatID, err := strconv.ParseInt(task.Target, 10, 64)
+			if err != nil {
+				log.Printf("[Worker %d] Error parsing chat ID: %v", id, err)
+				continue
+			}
+
+			err = q.tgClient.SendFile(chatID, task.FilePath)
+			if err != nil {
+				log.Printf("[Worker %d] Failed to send file %s: %v", id, task.ID, err)
+				continue
+			}
 
 			log.Printf("[Worker %d] Task %s processed.", id, task.ID)
 		}
