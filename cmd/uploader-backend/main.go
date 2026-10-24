@@ -35,7 +35,7 @@ func main() {
 	}
 	log.Println("[Main] Telegram Bot connection successfully authorized.")
 
-	taskQueue := queue.NewTaskChannelQueue(100, tgClient)
+	taskQueue := queue.NewTaskChannelQueue(100, tgClient, cfg.TelegramChatID)
 
 	shutdownCtx, stopSignals := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stopSignals()
