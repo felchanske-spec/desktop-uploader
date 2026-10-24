@@ -12,3 +12,7 @@ run:
 test:
 	@echo "Running all unit tests safely isolated..."
 	go test -v ./...
+
+build-service:
+	@echo "Compiling native macOS system service binary"
+	go build -o bin/uploader-service cmd/uploader-service/main.go

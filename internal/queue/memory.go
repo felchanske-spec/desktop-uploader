@@ -17,14 +17,16 @@ type TelegramClient interface {
 }
 
 type TaskChannelQueue struct {
-	ch       chan domain.Task
-	tgClient TelegramClient
+	ch            chan domain.Task
+	tgClient      TelegramClient
+	defaultTarget string
 }
 
-func NewTaskChannelQueue(bufferSize int, tgClient TelegramClient) *TaskChannelQueue {
+func NewTaskChannelQueue(bufferSize int, tgClient TelegramClient, defaultTarget string) *TaskChannelQueue {
 	return &TaskChannelQueue{
-		ch:       make(chan domain.Task, bufferSize),
-		tgClient: tgClient,
+		ch:            make(chan domain.Task, bufferSize),
+		tgClient:      tgClient,
+		defaultTarget: defaultTarget,
 	}
 }
 
@@ -68,7 +70,7 @@ func (q *TaskChannelQueue) worker(ctx context.Context, id int, wg *sync.WaitGrou
 
 			log.Printf("[Worker %d] Processing task %s for file: %s", id, task.ID, task.FilePath)
 
-			chatID, err := strconv.ParseInt(task.Target, 10, 64)
+			chatID, err := strconv.ParseInt(q.defaultTarget, 10, 64)
 			if err != nil {
 				log.Printf("[Worker %d] Error parsing chat ID: %v", id, err)
 				continue
@@ -80,7 +82,7 @@ func (q *TaskChannelQueue) worker(ctx context.Context, id int, wg *sync.WaitGrou
 				continue
 			}
 
-			log.Printf("[Worker %d] Task %s processed.", id, task.ID)
+			log.Printf("✅ [Worker %d] Sent! File processed successfully: %s (ID задачи: %s)", id, task.FilePath, task.ID)
 		}
 	}
 }
