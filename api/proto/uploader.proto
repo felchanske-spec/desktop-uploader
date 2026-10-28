@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./api/pb;pb";
+
+service Upload {
+    rpc UploadFile (UploadRequest) returns (stream UploadResponse);
+}
+
+message UploadRequest {
+    string file_path = 1;
+    string target = 2;
+}
+
+message UploadResponse {
+    enum State {
+        QUEUED = 0;
+        VALIDATING = 1;
+        SENDING = 2;
+        SUCCESS = 3;
+        FAILED = 4;
+    }
+
+    State state = 1;
+    int32 progress_percent = 2;
+    string message = 3;
+}
